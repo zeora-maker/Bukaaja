@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Sisi</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --dark-gold: #8b6914;
+    --cream: #f5ead6;
+    --dark: #0a0804;
+    --blood: #8b1a1a;
+    --ash: #2a2520;
+    --smoke: #4a4035;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    font-family: 'Crimson Text', serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ===== ENVELOPE SCENE ===== */
+  #envelope-scene {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, #1a1208 0%, #050301 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  #envelope-scene.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .env-hint {
+    font-family: 'Special Elite', cursive;
+    color: var(--gold);
+    font-size: 0.85rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeIn 1s 1.5s ease forwards;
+  }
+
+  .envelope-wrap {
+    position: relative;
+    width: 340px;
+    height: 240px;
+    cursor: pointer;
+    filter: drop-shadow(0 0 40px rgba(201,168,76,0.3));
+    animation: floatEnv 3s ease-in-out infinite;
+  }
+
+  @keyframes floatEnv {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .envelope-wrap.opening { animation: none; }
+
+  /* Envelope body */
+  .env-body {
+    position: absolute;
+    bottom: 0;
+    width: 340px;
+    height: 200px;
+    background: linear-gradient(135deg, #1e1608 0%, #2d2010 50%, #1e1608 100%);
+    border: 1px solid var(--dark-gold);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .env-body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(201,168,76,0.03) 10px, rgba(201,168,76,0.03) 11px);
+  }
+
+  /* V-fold bottom */
+  .env-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 340px;
+    height: 100px;
+    overflow: hidden;
+  }
+  .env-bottom::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 170px solid transparent;
+    border-right: 170px solid transparent;
+    border-bottom: 100px solid #291d0a;
+  }
+
+  .env-left-fold {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-left: 170px solid #2d2010;
+    border-top: 200px solid transparent;
+  }
+
+  .env-right-fold {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-right: 170px solid #251b09;
+    border-top: 200px solid transparent;
+  }
+
+  /* Flap */
+  .env-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 340px;
+    height: 140px;
+    transform-origin: top center;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+  }
+
+  .env-flap-inner {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .env-flap-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 170px solid transparent;
+    border-right: 170px solid transparent;
+    border-top: 140px solid #2d2010;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  }
+
+  .env-flap-inner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 168px solid transparent;
+    border-right: 168px solid transparent;
+    border-top: 138px solid #241a08;
+  }
+
+  .envelope-wrap.opening .env-flap {
+    transform: rotateX(-180deg);
+  }
+
+  /* Wax seal */
+  .wax-seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -10px);
+    width: 54px;
+    height: 54px;
+    z-index: 20;
+    transition: opacity 0.3s ease;
+  }
+
+  .envelope-wrap.opening .wax-seal { opacity: 0; }
+
+  /* Card emerging */
+  .card-peek {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0px);
+    width: 280px;
+    height: 180px;
+    background: linear-gradient(135deg, #f5ead6, #e8d5b0);
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    z-index: 5;
+    transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .card-peek-text {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 0.65rem;
+    color: var(--dark-gold);
+    text-align: center;
+    letter-spacing: 2px;
+    padding: 10px;
+    opacity: 0.7;
+  }
+
+  .envelope-wrap.opening .card-peek {
+    transform: translateX(-50%) translateY(-160px);
+  }
+
+  /* Scan lines on envelope */
+  .env-scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 4px);
+    pointer-events: none;
+    z-index: 25;
+  }
+
+  /* Gold chains decor on envelope */
+  .env-chain {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    z-index: 15;
+  }
+
+  .env-chain span {
+    width: 18px;
+    height: 10px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* Click ripple */
+  .env-glow {
+    position: absolute;
+    inset: -20px;
+    border-radius: 4px;
+    border: 1px solid rgba(201,168,76,0.2);
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.1); opacity: 0.5; }
+    50% { box-shadow: 0 0 50px rgba(201,168,76,0.4); opacity: 1; }
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  #main-content {
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  #main-content.visible { opacity: 1; }
+
+  /* ===== PARALLAX HERO ===== */
+  .hero {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .parallax-bg {
+    position: absolute;
+    inset: -20%;
+    background-image: url('https://files.catbox.moe/gnm7ez.jpg');
+    background-size: cover;
+    background-position: center top;
+    will-change: transform;
+    filter: brightness(0.35) sepia(0.3) contrast(1.2);
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: 
+      linear-gradient(to bottom, rgba(5,3,1,0.3) 0%, transparent 40%, transparent 60%, rgba(5,3,1,0.95) 100%),
+      radial-gradient(ellipse at center, transparent 30%, rgba(5,3,1,0.5) 100%);
+  }
+
+  /* Survey Corps Wings SVG */
+  .wings-hero {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.06;
+    width: 600px;
+    height: 400px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 8px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: slideUp 0.8s 0.3s ease forwards;
+  }
+
+  .hero-name {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    text-shadow: 0 0 80px rgba(201,168,76,0.4), 0 2px 4px rgba(0,0,0,0.8);
+    opacity: 0;
+    animation: slideUp 0.8s 0.5s ease forwards;
+  }
+
+  .hero-age {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    color: var(--gold);
+    letter-spacing: 6px;
+    margin-top: 16px;
+    opacity: 0;
+    animation: slideUp 0.8s 0.7s ease forwards;
+  }
+
+  .hero-divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    margin: 24px auto;
+    opacity: 0;
+    animation: slideUp 0.8s 0.9s ease forwards;
+  }
+
+  .hero-date {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 5px;
+    color: rgba(201,168,76,0.6);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: slideUp 0.8s 1.1s ease forwards;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s 2s ease forwards;
+  }
+
+  .scroll-indicator span {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 4px;
+    color: rgba(201,168,76,0.5);
+    text-transform: uppercase;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollAnim 1.5s ease-in-out infinite;
+  }
+
+  @keyframes scrollAnim {
+    0% { transform: scaleY(1); transform-origin: top; }
+    50% { transform: scaleY(0.3); transform-origin: top; }
+    51% { transform: scaleY(0.3); transform-origin: bottom; }
+    100% { transform: scaleY(1); transform-origin: bottom; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== EREN SECTION ===== */
+  .eren-section {
+    position: relative;
+    min-height: 100vh;
+    background: var(--dark);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .eren-bg-texture {
+    position: absolute;
+    inset: 0;
+    background: 
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201,168,76,0.02) 60px, rgba(201,168,76,0.02) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(201,168,76,0.02) 60px, rgba(201,168,76,0.02) 61px);
+  }
+
+  .eren-bg-glow {
+    position: absolute;
+    left: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(139,26,26,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .eren-container {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    width: 100%;
+    min-height: 100vh;
+    align-items: center;
+  }
+
+  .eren-image-side {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .eren-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    filter: contrast(1.15) brightness(0.85) saturate(0.8);
+    will-change: transform;
+  }
+
+  .eren-img-overlay {
+    position: absolute;
+    inset: 0;
+    background: 
+      linear-gradient(to right, transparent 50%, var(--dark) 100%),
+      linear-gradient(to bottom, var(--dark) 0%, transparent 15%, transparent 85%, var(--dark) 100%);
+  }
+
+  /* Titan slash decorative */
+  .slash-decor {
+    position: absolute;
+    right: -2px;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    overflow: hidden;
+    z-index: 3;
+  }
+
+  .eren-text-side {
+    padding: 60px 60px 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 32px;
+  }
+
+  .section-label {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 6px;
+    color: var(--blood);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--blood);
+  }
+
+  .eren-title {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--cream);
+    line-height: 1.1;
+    font-weight: 700;
+  }
+
+  .eren-title span {
+    color: var(--gold);
+    display: block;
+  }
+
+  .eren-quote {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: rgba(245,234,214,0.7);
+    line-height: 1.8;
+    border-left: 2px solid var(--blood);
+    padding-left: 20px;
+  }
+
+  .eren-body {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.05rem;
+    color: rgba(245,234,214,0.6);
+    line-height: 1.9;
+  }
+
+  /* ===== WISH CARDS SECTION ===== */
+  .wishes-section {
+    position: relative;
+    padding: 120px 40px;
+    background: linear-gradient(180deg, var(--dark) 0%, #0d0a04 50%, var(--dark) 100%);
+    overflow: hidden;
+  }
+
+  .wishes-parallax-bg {
+    position: absolute;
+    inset: -30%;
+    background-image: url('https://files.catbox.moe/gnm7ez.jpg');
+    background-size: cover;
+    background-position: center 60%;
+    filter: brightness(0.08) sepia(0.5);
+    will-change: transform;
+  }
+
+  .wishes-section::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(139,26,26,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 50%, rgba(201,168,76,0.06) 0%, transparent 60%);
+  }
+
+  .wishes-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+
+  .section-header .label {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 8px;
+    color: var(--blood);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .section-header h2 {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: clamp(1.5rem, 4vw, 2.8rem);
+    color: var(--cream);
+    font-weight: 700;
+  }
+
+  .section-header h2 span {
+    color: var(--gold);
+  }
+
+  .wish-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+
+  .wish-card {
+    background: linear-gradient(135deg, rgba(29,22,10,0.9) 0%, rgba(20,15,6,0.95) 100%);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 36px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  .wish-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s ease;
+  }
+
+  .wish-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(201,168,76,0.5);
+  }
+
+  .wish-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--blood), transparent);
+  }
+
+  .wish-card::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%);
+  }
+
+  .wish-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  .wish-card h3 {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 0.85rem;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    font-weight: 400;
+  }
+
+  .wish-card p {
+    font-family: 'Crimson Text', serif;
+    font-size: 1rem;
+    color: rgba(245,234,214,0.65);
+    line-height: 1.85;
+  }
+
+  /* ===== CLOSING SECTION ===== */
+  .closing-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .closing-parallax {
+    position: absolute;
+    inset: -20%;
+    background-image: url('https://files.catbox.moe/gnm7ez.jpg');
+    background-size: cover;
+    background-position: center bottom;
+    filter: brightness(0.2) sepia(0.4) contrast(1.3);
+    will-change: transform;
+  }
+
+  .closing-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(5,3,1,0.7) 0%, rgba(139,26,26,0.15) 50%, rgba(5,3,1,0.7) 100%);
+  }
+
+  .closing-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 700px;
+  }
+
+  /* Wings SVG large */
+  .wings-closing {
+    width: 160px;
+    height: 100px;
+    margin: 0 auto 40px;
+    opacity: 0.7;
+  }
+
+  .closing-title {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    color: var(--gold);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    font-weight: 400;
+  }
+
+  .closing-main {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: clamp(2rem, 7vw, 5rem);
+    color: var(--cream);
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(201,168,76,0.3);
+    margin-bottom: 16px;
+  }
+
+  .closing-main span {
+    color: var(--gold);
+    display: block;
+  }
+
+  .closing-sub {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: rgba(245,234,214,0.5);
+    letter-spacing: 2px;
+    margin-top: 24px;
+    margin-bottom: 48px;
+  }
+
+  .closing-msg {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.05rem;
+    color: rgba(245,234,214,0.6);
+    line-height: 2;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .closing-sig {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 5px;
+    color: rgba(201,168,76,0.5);
+    text-transform: uppercase;
+    margin-top: 48px;
+  }
+
+  /* Floating particles */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFall linear infinite;
+  }
+
+  @keyframes particleFall {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.2; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .eren-container {
+      grid-template-columns: 1fr;
+    }
+    .eren-image-side {
+      height: 50vh;
+    }
+    .eren-text-side {
+      padding: 40px 24px;
+    }
+    .eren-img-overlay {
+      background: 
+        linear-gradient(to bottom, transparent 60%, var(--dark) 100%),
+        linear-gradient(to bottom, var(--dark) 0%, transparent 15%);
+    }
+    .envelope-wrap { width: 280px; }
+    .env-body { width: 280px; }
+    .env-flap { width: 280px; }
+    .env-flap-inner::before { border-left-width: 140px; border-right-width: 140px; }
+    .env-flap-inner::after { border-left-width: 138px; border-right-width: 138px; }
+    .env-left-fold { border-left-width: 140px; }
+    .env-right-fold { border-right-width: 140px; }
+    .env-bottom::before { border-left-width: 140px; border-right-width: 140px; }
+    .card-peek { width: 230px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- ENVELOPE SCENE -->
+<div id="envelope-scene">
+  <p class="env-hint">Ketuk untuk membuka</p>
+  
+  <div class="envelope-wrap" id="envelope" onclick="openEnvelope()">
+    <div class="env-glow"></div>
+    
+    <!-- Card peek inside -->
+    <div class="card-peek">
+      <div class="card-peek-text">For Sisi<br>— Happy Birthday —</div>
+    </div>
+
+    <!-- Envelope body layers -->
+    <div class="env-body">
+      <div class="env-left-fold"></div>
+      <div class="env-right-fold"></div>
+      <div class="env-bottom"></div>
+      <div class="env-chain">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="env-scanlines"></div>
+    </div>
+
+    <!-- Flap -->
+    <div class="env-flap">
+      <div class="env-flap-inner"></div>
+    </div>
+
+    <!-- Wax seal SVG -->
+    <svg class="wax-seal" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="27" cy="27" r="25" fill="#6b1010" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="27" cy="27" r="20" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="0.5"/>
+      <!-- Wings of freedom mini -->
+      <g fill="rgba(201,168,76,0.9)" transform="translate(27,27)">
+        <!-- Left wing -->
+        <path d="M-12,-4 C-10,-8 -6,-10 -3,-8 C-5,-6 -7,-4 -6,-2 C-8,-1 -11,-2 -12,-4Z"/>
+        <path d="M-10,-2 C-8,-6 -4,-7 -2,-5 C-4,-3 -6,-2 -5,0 C-7,0 -9,-1 -10,-2Z" opacity="0.6"/>
+        <!-- Right wing -->
+        <path d="M12,-4 C10,-8 6,-10 3,-8 C5,-6 7,-4 6,-2 C8,-1 11,-2 12,-4Z"/>
+        <path d="M10,-2 C8,-6 4,-7 2,-5 C4,-3 6,-2 5,0 C7,0 9,-1 10,-2Z" opacity="0.6"/>
+        <!-- Body -->
+        <ellipse cx="0" cy="-2" rx="2.5" ry="4" opacity="0.8"/>
+      </g>
+      <text x="27" y="42" text-anchor="middle" font-family="serif" font-size="5" fill="rgba(201,168,76,0.7)" letter-spacing="1">SISI</text>
+    </svg>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main-content">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="parallax-bg" data-parallax="0.4"></div>
+    
+    <!-- Survey Corps Wings bg -->
+    <svg class="wings-hero" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Wings of Freedom - stylized large -->
+      <g fill="white">
+        <!-- Left wing group -->
+        <path d="M50,200 C80,120 150,80 200,100 C170,140 140,160 150,190 C120,185 80,190 50,200Z"/>
+        <path d="M80,180 C110,110 170,80 210,105 C185,140 160,158 168,185 C145,178 105,178 80,180Z" opacity="0.5"/>
+        <path d="M70,220 C100,155 165,120 215,145 C190,175 165,188 170,210 C148,205 105,210 70,220Z" opacity="0.3"/>
+        <path d="M60,240 C95,178 158,145 208,168 C183,198 160,208 164,228 C143,225 100,228 60,240Z" opacity="0.2"/>
+        <!-- Right wing group -->
+        <path d="M550,200 C520,120 450,80 400,100 C430,140 460,160 450,190 C480,185 520,190 550,200Z"/>
+        <path d="M520,180 C490,110 430,80 390,105 C415,140 440,158 432,185 C455,178 495,178 520,180Z" opacity="0.5"/>
+        <path d="M530,220 C500,155 435,120 385,145 C410,175 435,188 430,210 C452,205 495,210 530,220Z" opacity="0.3"/>
+        <path d="M540,240 C505,178 442,145 392,168 C417,198 440,208 436,228 C457,225 500,228 540,240Z" opacity="0.2"/>
+        <!-- Center body -->
+        <ellipse cx="300" cy="200" rx="25" ry="45" opacity="0.8"/>
+        <ellipse cx="300" cy="185" rx="15" ry="20" opacity="0.9"/>
+        <!-- Chain/rope -->
+        <rect x="290" y="220" width="5" height="30" rx="2" opacity="0.6"/>
+        <ellipse cx="292" cy="255" rx="12" ry="8" fill="none" stroke="white" stroke-width="2" opacity="0.5"/>
+      </g>
+    </svg>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:inline;vertical-align:middle;color:#c9a84c;margin-right:8px">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+        </svg>
+        Selamat Ulang Tahun
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:inline;vertical-align:middle;color:#c9a84c;margin-left:8px">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+        </svg>
+      </p>
+      <h1 class="hero-name">Sisi</h1>
+      <p class="hero-age">XXIII &nbsp;&mdash;&nbsp; 23 Tahun</p>
+      <div class="hero-divider"></div>
+      <p class="hero-date">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:inline;vertical-align:middle;margin-right:6px;color:#c9a84c">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        Hari Spesialmu
+      </p>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- EREN SECTION -->
+  <section class="eren-section">
+    <div class="eren-bg-texture"></div>
+    <div class="eren-bg-glow"></div>
+
+    <div class="eren-container">
+      <div class="eren-image-side">
+        <!-- Use provided image if uploaded, otherwise placeholder styled -->
+        <img class="eren-img" src="img1.png" 
+          onerror="this.style.background='linear-gradient(135deg,#1a1208,#0a0804)';this.style.objectFit='none'"
+          alt="Eren Yeager" 
+          data-parallax="0.3"
+        />
+        <div class="eren-img-overlay"></div>
+      </div>
+
+      <div class="eren-text-side">
+        <p class="section-label">Chapter I</p>
+        <h2 class="eren-title">
+          Di Hari yang<br>
+          <span>Paling Berharga</span>
+        </h2>
+        <blockquote class="eren-quote">
+          "Seperti Eren yang terus melangkah meski dunia menghalanginya, kamu pun telah melewati perjalanan panjangmu sendiri."
+        </blockquote>
+        <p class="eren-body">
+          23 tahun bukan sekedar angka. Itu adalah 23 bab dari sebuah kisah yang terus ditulis dengan keberanian, air mata, tawa, dan semangat yang tak pernah padam.
+        </p>
+        
+        <!-- Wings SVG small -->
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.4">
+          <g fill="#c9a84c">
+            <path d="M5,25 C12,12 22,8 28,14 C23,18 18,21 20,25 C15,24 9,24 5,25Z"/>
+            <path d="M8,22 C15,10 25,7 30,13 C25,17 20,20 22,24 C17,23 11,22 8,22Z" opacity="0.5"/>
+            <path d="M75,25 C68,12 58,8 52,14 C57,18 62,21 60,25 C65,24 71,24 75,25Z"/>
+            <path d="M72,22 C65,10 55,7 50,13 C55,17 60,20 58,24 C63,23 69,22 72,22Z" opacity="0.5"/>
+            <ellipse cx="40" cy="25" rx="4" ry="8" opacity="0.8"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- WISHES SECTION -->
+  <section class="wishes-section">
+    <div class="wishes-parallax-bg" data-parallax="0.5"></div>
+
+    <div class="wishes-inner">
+      <div class="section-header">
+        <span class="label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b1a1a" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:6px">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          Doa &amp; Harapan
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b1a1a" stroke-width="2" style="display:inline;vertical-align:middle;margin-left:6px">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </span>
+        <h2>Ucapan untuk <span>Sisi</span></h2>
+      </div>
+
+      <div class="wish-cards">
+
+        <div class="wish-card" data-delay="0">
+          <!-- Flame SVG -->
+          <svg class="wish-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22,6 C22,6 26,14 24,20 C28,16 30,10 28,6 C34,12 36,20 32,28 C30,34 26,38 22,38 C18,38 14,34 12,28 C8,20 10,12 16,6 C14,14 18,18 18,22 C20,18 22,14 22,6Z" fill="#c9a84c" opacity="0.8"/>
+            <path d="M22,20 C22,20 24,26 22,30 C20,26 20,22 22,20Z" fill="#f5ead6" opacity="0.6"/>
+          </svg>
+          <h3>Semangat</h3>
+          <p>Semoga api semangatmu tidak pernah padam. Terus melangkah dengan berani, seperti pasukan yang tak kenal menyerah.</p>
+        </div>
+
+        <div class="wish-card" data-delay="150">
+          <!-- Sword / Blade SVG -->
+          <svg class="wish-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="22" y1="4" x2="22" y2="32" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M22,4 L26,12 L22,10 L18,12 Z" fill="#c9a84c" opacity="0.7"/>
+            <rect x="16" y="30" width="12" height="3" rx="1.5" fill="#c9a84c" opacity="0.5"/>
+            <rect x="19" y="33" width="6" height="7" rx="1" fill="#8b6914" opacity="0.6"/>
+            <line x1="12" y1="20" x2="32" y2="20" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+          </svg>
+          <h3>Kekuatan</h3>
+          <p>Di usia 23 ini, semoga kamu semakin kuat menghadapi segala rintangan. Setiap luka adalah tanda bahwa kamu masih bertarung.</p>
+        </div>
+
+        <div class="wish-card" data-delay="300">
+          <!-- Rose SVG -->
+          <svg class="wish-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="22" cy="18" r="8" fill="#8b1a1a" opacity="0.7"/>
+            <path d="M22,10 C22,10 28,14 26,18 C28,16 32,16 30,12 C32,16 30,22 26,22 C28,22 28,26 24,26 C26,26 26,30 22,30 C18,30 18,26 20,26 C16,26 16,22 18,22 C14,22 12,16 14,12 C12,16 16,16 18,18 C16,14 22,10 22,10Z" fill="#8b1a1a" opacity="0.9"/>
+            <path d="M22,18 C22,18 20,22 22,26 C24,22 22,18 22,18Z" fill="#c9a84c" opacity="0.3"/>
+            <line x1="22" y1="30" x2="22" y2="40" stroke="#4a7c30" stroke-width="1.5"/>
+            <path d="M22,35 C18,33 16,35 18,37" stroke="#4a7c30" stroke-width="1" fill="none"/>
+          </svg>
+          <h3>Kebahagiaan</h3>
+          <p>Semoga hidupmu dipenuhi momen indah yang membuatmu tersenyum. Kebahagiaan sejati ada di setiap langkah kecilmu.</p>
+        </div>
+
+        <div class="wish-card" data-delay="450">
+          <!-- Crown SVG -->
+          <svg class="wish-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8,32 L8,18 L16,26 L22,10 L28,26 L36,18 L36,32 Z" fill="none" stroke="#c9a84c" stroke-width="2" stroke-linejoin="round"/>
+            <rect x="8" y="32" width="28" height="4" rx="1" fill="#c9a84c" opacity="0.6"/>
+            <circle cx="22" cy="10" r="2.5" fill="#c9a84c"/>
+            <circle cx="8" cy="18" r="2" fill="#c9a84c" opacity="0.7"/>
+            <circle cx="36" cy="18" r="2" fill="#c9a84c" opacity="0.7"/>
+          </svg>
+          <h3>Kejayaan</h3>
+          <p>Kamu layak mendapat yang terbaik. Mahkota yang kamu kenakan bukan dari emas, tapi dari perjuangan dan integritas.</p>
+        </div>
+
+        <div class="wish-card" data-delay="600">
+          <!-- Compass / Journey SVG -->
+          <svg class="wish-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="22" cy="22" r="16" stroke="#c9a84c" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="22" cy="22" r="2" fill="#c9a84c"/>
+            <path d="M22,22 L22,10" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/>
+            <path d="M22,22 L30,28" stroke="#8b1a1a" stroke-width="1.5" stroke-linecap="round"/>
+            <text x="22" y="9" text-anchor="middle" font-family="serif" font-size="5" fill="#c9a84c">N</text>
+            <text x="22" y="38" text-anchor="middle" font-family="serif" font-size="5" fill="#c9a84c" opacity="0.5">S</text>
+            <text x="9" y="24" text-anchor="middle" font-family="serif" font-size="5" fill="#c9a84c" opacity="0.5">W</text>
+            <text x="36" y="24" text-anchor="middle" font-family="serif" font-size="5" fill="#c9a84c" opacity="0.5">E</text>
+          </svg>
+          <h3>Perjalanan</h3>
+          <p>Setiap hari adalah babak baru dari petualanganmu. Semoga jalanmu selalu terang dan dipenuhi hal-hal yang bermakna.</p>
+        </div>
+
+        <div class="wish-card" data-delay="750">
+          <!-- Heart / Love SVG -->
+          <svg class="wish-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22,36 C22,36 6,26 6,16 C6,11 10,8 14,8 C17,8 20,10 22,13 C24,10 27,8 30,8 C34,8 38,11 38,16 C38,26 22,36 22,36Z" fill="#8b1a1a" opacity="0.8" stroke="#c9a84c" stroke-width="0.5"/>
+            <path d="M22,32 C22,32 10,24 10,17 C10,14 12,12 14,12 C16.5,12 19,14 22,18 C25,14 27.5,12 30,12 C32,12 34,14 34,17 C34,24 22,32 22,32Z" fill="#8b1a1a" opacity="0.4"/>
+          </svg>
+          <h3>Dicintai</h3>
+          <p>Kamu selalu dikelilingi oleh orang-orang yang peduli padamu. Semoga ikatan itu semakin erat di tahun-tahun mendatang.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING SECTION -->
+  <section class="closing-section">
+    <div class="closing-parallax" data-parallax="0.35"></div>
+    <div class="closing-overlay"></div>
+
+    <div class="closing-content">
+      <!-- Large Wings SVG -->
+      <svg class="wings-closing" viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#c9a84c" opacity="0.85">
+          <path d="M10,50 C22,22 42,14 56,26 C46,36 36,42 40,50 C30,48 18,48 10,50Z"/>
+          <path d="M16,44 C28,18 46,12 58,24 C48,34 40,40 43,48 C33,46 22,44 16,44Z" opacity="0.5"/>
+          <path d="M12,56 C24,30 44,22 58,34 C48,42 39,46 42,54 C32,52 20,53 12,56Z" opacity="0.3"/>
+          <path d="M150,50 C138,22 118,14 104,26 C114,36 124,42 120,50 C130,48 142,48 150,50Z"/>
+          <path d="M144,44 C132,18 114,12 102,24 C112,34 120,40 117,48 C127,46 138,44 144,44Z" opacity="0.5"/>
+          <path d="M148,56 C136,30 116,22 102,34 C112,42 121,46 118,54 C128,52 140,53 148,56Z" opacity="0.3"/>
+          <ellipse cx="80" cy="50" rx="8" ry="16" opacity="0.8"/>
+          <ellipse cx="80" cy="42" rx="5" ry="10" opacity="0.9"/>
+          <rect x="77" y="58" width="6" height="18" rx="2" opacity="0.5"/>
+          <ellipse cx="80" cy="80" rx="10" ry="6" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.4"/>
+        </g>
+      </svg>
+
+      <p class="closing-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5" style="display:inline;vertical-align:middle;margin-right:8px">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Wings of Freedom &mdash; Survey Corps
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5" style="display:inline;vertical-align:middle;margin-left:8px">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </p>
+
+      <h2 class="closing-main">
+        Happy<br>
+        <span>Birthday</span>
+      </h2>
+
+      <p class="closing-sub">Sisi &mdash; 23 Tahun</p>
+
+      <p class="closing-msg">
+        Semoga tahun ke-23 ini menjadi bab terbaik dalam hidupmu. Kamu sudah melewati banyak hal dan kamu masih berdiri di sini, lebih kuat dari sebelumnya. Teruslah maju, jangan berhenti bermimpi.
+      </p>
+
+      <p class="closing-sig">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:inline;vertical-align:middle;margin-right:6px">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        With Love
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:inline;vertical-align:middle;margin-left:6px">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </p>
+    </div>
+  </section>
+
+</div><!-- end main-content -->
+
+<script>
+// ===== PARTICLES =====
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.top = Math.random() * 100 + 'vh';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+    p.style.opacity = Math.random() * 0.4;
+    container.appendChild(p);
+  }
+}
+createParticles();
+
+// ===== ENVELOPE OPEN =====
+let opened = false;
+function openEnvelope() {
+  if (opened) return;
+  opened = true;
+  const env = document.getElementById('envelope');
+  env.classList.add('opening');
+  
+  setTimeout(() => {
+    document.getElementById('envelope-scene').classList.add('hide');
+    document.getElementById('main-content').classList.add('visible');
+    document.body.style.overflow = 'auto';
+  }, 1800);
+}
+
+// Lock scroll until opened
+document.body.style.overflow = 'hidden';
+
+// ===== PARALLAX =====
+function handleParallax() {
+  const scrollY = window.scrollY;
+  
+  // Hero bg
+  document.querySelectorAll('[data-parallax]').forEach(el => {
+    const speed = parseFloat(el.dataset.parallax) || 0.3;
+    const rect = el.closest('section').getBoundingClientRect();
+    const sectionTop = rect.top + scrollY;
+    const offset = (scrollY - sectionTop) * speed;
+    el.style.transform = `translateY(${offset}px)`;
+  });
+
+  // Eren image parallax
+  const erenImg = document.querySelector('.eren-img');
+  if (erenImg) {
+    const section = erenImg.closest('section');
+    const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      const progress = -rect.top / (window.innerHeight + rect.height);
+      erenImg.style.transform = `translateY(${progress * 80}px) scale(1.1)`;
+    }
+  }
+}
+
+window.addEventListener('scroll', handleParallax, { passive: true });
+
+// ===== INTERSECTION OBSERVER for wish cards =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      const delay = entry.target.dataset.delay || 0;
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, parseInt(delay));
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.wish-card').forEach(card => {
+  observer.observe(card);
+});
+</script>
+</body>
+</html>
